@@ -1,8 +1,8 @@
 ### Bài tập Quản lý cửa Hàng Sách
 
 Mục đích: Làm quen và tìm hiểu về hệ sinh thái Spring
-Yêu cầu config lại file application.yml trước khi chạy
-Sử dụng beebook.sql làm CSDL
+- Yêu cầu config lại file application.yml trước khi chạy
+- Sử dụng beebook.sql làm CSDL
 
 Các Spring Module được sử dụng trong bài:
 - Sử dụng Spring Security
