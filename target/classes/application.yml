@@ -1,0 +1,29 @@
+server:
+    port: 8080
+spring:
+    datasource:
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        password: bac6122003
+        url: jdbc:mysql://localhost:3306/bookstore2
+        username: root
+    jpa:
+        database-platform: org.hibernate.dialect.MySQL8Dialect
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+    servlet:
+        multipart:
+            maxFileSize: -1
+    mail:
+        host: smtp.gmail.com
+        port: 587
+        username: zenofuture@gmail.com
+        password: iubi weue mbnf kfjw
+app:
+    upload:
+        dir: ${user.dir}/resource/img/upload
+        default: ${user.dir}/resource/img/upload/product/avatar/conan.png
+
+
+
+
