@@ -10,7 +10,7 @@ Các Spring Module được sử dụng trong bài:
 - Sử dụng Spring Boot
   
 Note: 
-Chưa tạo chức năng thêm admin nên cần thêm bằng tay trong DB
-Chưa sử dụng RestApi
-Tập trung chủ yếu vào nghiệp vụ quản lý hóa đơn (SaleOrder) và quản lý sản phẩm (Product)
+- Chưa tạo chức năng thêm admin nên cần thêm bằng tay trong DB
+- Chưa sử dụng RestApi
+- Tập trung chủ yếu vào nghiệp vụ quản lý hóa đơn (SaleOrder) và quản lý sản phẩm (Product)
   
