@@ -2,7 +2,6 @@ package beebooks.service;
 
 import beebooks.entities.Role;
 import beebooks.repository.RoleRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service

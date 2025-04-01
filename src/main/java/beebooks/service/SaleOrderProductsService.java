@@ -3,7 +3,6 @@ package beebooks.service;
 import beebooks.ultilities.searchUtil.OrderSearch;
 import beebooks.entities.SaleorderProducts;
 import beebooks.repository.SaleOrderProductRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 

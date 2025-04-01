@@ -42,7 +42,7 @@ public abstract class BaseService<T extends BaseEntity, ID extends Serializable>
 		repository.delete(entity);
 	}
 
-	public void deleteById(ID id, Boolean status) {
+	public void deleteById(ID id) {
 		Optional<T> entityOptional = repository.findById(id);
 		entityOptional.ifPresent(entity -> {
 			entity.setStatus(false);

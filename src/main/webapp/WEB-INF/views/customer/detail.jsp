@@ -20,14 +20,14 @@
           integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
           crossorigin="anonymous"/>
     <link rel="stylesheet" type="text/css" href="${base}/css/details.css">
-    <jsp:include page="/WEB-INF/views/customer/layouts/css.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/views/customer/layouts/css.jsp"/>
 <%--    <link rel="stylesheet" type="text/css" href="${base}/css/details.css">--%>
 </head>
 <body>
 <main class="container">
 
     <!--open header-->
-    <jsp:include page="/WEB-INF/views/customer/layouts/header.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/views/customer/layouts/header.jsp"/>
     <!--close header-->
 
     <div class="navigation">
@@ -88,7 +88,7 @@
     <!--close content-->
 
     <!--open footer -->
-    <jsp:include page="/WEB-INF/views/customer/layouts/footer.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/views/customer/layouts/footer.jsp"/>
     <!--close footer-->
     <div class="copyright">
         Copyright <i class="far fa-copyright"></i> <a href="#">msic.</a> <a
@@ -116,5 +116,5 @@
 <%--</script>--%>
 </body>
 
-<jsp:include page="/WEB-INF/views/customer/layouts/js.jsp"></jsp:include>
+<jsp:include page="/WEB-INF/views/customer/layouts/js.jsp"/>
 </html>

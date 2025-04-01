@@ -6,7 +6,6 @@ import beebooks.dto.ProductDetailDto;
 import beebooks.entities.Product;
 import beebooks.ultilities.ResultUtil;
 import beebooks.ultilities.searchUtil.ProductSearch;
-import beebooks.entities.User;
 import beebooks.service.CategoriesService;
 import beebooks.service.ProductService;
 import lombok.RequiredArgsConstructor;

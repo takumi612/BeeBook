@@ -37,7 +37,7 @@ public class AdminUserController extends BaseController {
 	@GetMapping("/admin/deleteUser/{id}")
 	public String deleteUser(@PathVariable("id") Integer id,
 							 RedirectAttributes redirectAttributes) {
-		ResultUtil response = userService.deleteById(id);
+		ResultUtil response = userService.deleteUserById(id);
 		redirectAttributes.addFlashAttribute(response.getResult(), response.getMessage());
 		return "redirect:/admin/user";
 	}

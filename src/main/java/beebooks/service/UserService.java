@@ -39,7 +39,7 @@ public class UserService extends BaseService<User,Integer> {
 	}
 
 
-	public ResultUtil deleteById(Integer id) {
+	public ResultUtil deleteUserById(Integer id) {
 		Optional<User> userOptional = userRepository.findById(id);
 
 		if (userOptional.isPresent()) {
@@ -49,7 +49,7 @@ public class UserService extends BaseService<User,Integer> {
 			boolean hasAdminRole = roles.stream().anyMatch(role -> role.getName().equals("ADMIN"));
 
 			if (hasUserRole && !hasAdminRole) { // chỉ xóa nếu có vai trò 'user' và không có vai trò 'admin'
-				super.deleteById(id,false);
+				super.deleteById(id);
 				return new ResultUtil("successMessage", "Deactivate User thành công");
 			}
 			else{

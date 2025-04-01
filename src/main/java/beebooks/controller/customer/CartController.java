@@ -4,7 +4,6 @@ import beebooks.controller.BaseController;
 import beebooks.dto.CustomerDto;
 import beebooks.ultilities.Cart;
 import beebooks.ultilities.CartItem;
-import beebooks.entities.Product;
 import beebooks.entities.SaleOrder;
 import beebooks.entities.User;
 import beebooks.service.ProductService;
@@ -21,8 +20,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -86,14 +83,7 @@ public class CartController extends BaseController {
     @GetMapping("cart/remove/{productId}")
     public String removeProduct(final HttpServletRequest request,
                                 @PathVariable("productId") int productId) {
-        HttpSession session = request.getSession();
-        Cart cart = (Cart) session.getAttribute("cart");
-        List<CartItem> cartItem = cart.getCartItems();
-
-        cartItem.removeIf(item->item.getProductId()==productId);
-
-        session.setAttribute("cart", cart);
-        session.setAttribute("totalItems", cartItem.size());
+        productService.removeProductFromCart(request,productId);
         return "redirect:/cart/view";
     }
 
@@ -107,45 +97,8 @@ public class CartController extends BaseController {
     @RequestMapping(value = {"/addToCart"}, method = RequestMethod.POST)
     public ResponseEntity<Map<String, Object>> addToCart(final HttpServletRequest request,
                                                          final @RequestBody CartItem cartItem) {
-        Map<String, Object> jsonResult = new HashMap<>();
-        // Kiểm tra số lượng tồn kho của sản phẩm
-        Product productInDb = productService.findProductById(cartItem.getProductId());
-        cartItem.setProduct(productInDb);
-
-        log.info("-------------json1 :{}", jsonResult);
-        HttpSession session = request.getSession();
-
-        Cart cart;
-        if (session.getAttribute("cart") != null) {
-            cart = (Cart) session.getAttribute("cart");
-        } else {
-            cart = new Cart();
-        }
-
-        List<CartItem> cartItems = cart.getCartItems();
-        // Kiểm tra trong Cart đã có sản phẩm chua
-        boolean isExists = false;
-        for (CartItem item : cartItems) {
-            if (item.getProductId() == cartItem.getProductId()) {
-                isExists = true;
-                item.setQuantity(item.getQuantity() + cartItem.getQuantity());
-            }
-        }
-
-        if (!isExists) {
-            cartItem.setProductName(productInDb.getTitle());
-            if (productInDb.isPromotionValid()){
-                cartItem.setPriceUnit(productInDb.getPrice() - productInDb.getPrice()*(productInDb.getPromotion().getPercent()/100));
-            } else {
-                cartItem.setPriceUnit(productInDb.getPrice());
-            }
-            cart.getCartItems().add(cartItem);
-        }
-
-        jsonResult.put("status", "TC");
-        jsonResult.put("totalItems", cart.getCartItems().size());
-        session.setAttribute("cart", cart);
-        session.setAttribute("totalItems", cart.getCartItems().size());
-        return ResponseEntity.ok(jsonResult);
+        return productService.addItemToCart(request,cartItem);
     }
+
+
 }

@@ -4,7 +4,6 @@ import beebooks.specifications.SubscribeSpecification;
 import beebooks.ultilities.searchUtil.Search;
 import beebooks.entities.Subscribe;
 import beebooks.repository.SubscribeRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class SubscribeService extends BaseService<Subscribe,Integer> {
 		return subscribeRepository.findByEmail(entity.getEmail());
 	}
 
-	public void deleteById(int id) {
+	public void deleteById(Integer id) {
 		subscribeRepository.deleteById(id);
 	}
 }
