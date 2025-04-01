@@ -4,6 +4,7 @@ package beebooks.controller.admin;
 import beebooks.controller.BaseController;
 import beebooks.dto.PaymentStatusDto;
 import beebooks.dto.SaleOrderDto;
+import beebooks.ultilities.ResultUtil;
 import beebooks.ultilities.searchUtil.OrderSearch;
 import beebooks.entities.*;
 import beebooks.service.SaleOrderProductsService;
@@ -74,36 +75,10 @@ public class AdminOrderController extends BaseController{
 							  RedirectAttributes redirectAttributes,
 							  HttpServletRequest request) {
 
-		SaleOrder saleorder =new SaleOrder();
-		saleorder.setCode(orderCode);
-		saleorder.setReason(reason);
-
-		String redirectPath;
 		String contextPath = request.getContextPath();
-		String defaultRedirectUrl = contextPath + "/admin/order"; // URL mặc định nếu có lỗi
-
-		try {
-			saleorderService.rejectOrder(saleorder);
-			redirectAttributes.addFlashAttribute("success", "Đã hủy đơn hàng '" + orderCode + "' thành công!");
-			// Xác thực và sử dụng returnUrl
-			if (isValidRedirectUrl(returnUrl, contextPath)) {
-				redirectPath = returnUrl;
-			} else {
-				log.warn("Invalid or potentially unsafe returnUrl provided: '{}'. Falling back to default.", returnUrl);
-				redirectPath = defaultRedirectUrl;
-			}
-		}catch  (Exception e) {
-			log.error("Error rejecting order {}: {}", orderCode, e.getMessage(), e);
-			redirectAttributes.addFlashAttribute("error", "Lỗi khi hủy đơn hàng: " + e.getMessage());
-			// Ngay cả khi lỗi, vẫn cố gắng quay lại trang trước đó hoặc trang mặc định
-			if (isValidRedirectUrl(returnUrl, contextPath)) {
-				redirectPath = returnUrl;
-			} else {
-				redirectPath = defaultRedirectUrl;
-			}
-		}
-
-		return "redirect:" + redirectPath;
+		ResultUtil resultUtil = saleorderService.rejectOrder(orderCode,reason,returnUrl,contextPath);
+		redirectAttributes.addFlashAttribute(resultUtil.getResult(), resultUtil.getMessage());
+		return "redirect:" + resultUtil.getProperty();
 	}
 
 	@GetMapping("/deleteOrderProduct/{id}")
@@ -118,20 +93,6 @@ public class AdminOrderController extends BaseController{
 		return "redirect:/admin/order";
 	}
 
-	private boolean isValidRedirectUrl(String url, String contextPath) {
-		if (url == null || url.trim().isEmpty()) {
-			return false;
-		}
-		try {
-			URI uri = new URI(url);
-			// Chỉ cho phép URL tương đối bắt đầu từ context path và nằm trong khu vực admin
-			// Ngăn chặn chuyển hướng đến domain khác hoặc các khu vực không mong muốn
-			return !uri.isAbsolute() && url.startsWith(contextPath + "/admin/");
-		} catch (URISyntaxException e) {
-			// Nếu URL không hợp lệ cú pháp
-			return false;
-		}
-	}
 }
 
 

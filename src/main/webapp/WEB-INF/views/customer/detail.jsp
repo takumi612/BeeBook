@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="sanpham">
-                <img src="${base /upload/${product.avatar}" width="65%">
+                <img src="${base} /upload/${product.avatar}" width="65%">
             </div>
         </div>
 

@@ -20,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -120,23 +122,42 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 		saleOrderRepository.save(saleorder);
 	}
 
-	public void rejectOrder(SaleOrder saleOrder){
-		SaleOrder saleOrder2 = saleOrderRepository.findByCode(saleOrder.getCode());
-		saleOrder2.setPaymentStatus(PaymentStatus.CANCELLED);
-		saleOrder2.setReason(saleOrder.getReason());
+	public ResultUtil rejectOrder(String orderCode, String reason,String returnUrl, String contextPath){
+		String redirectPath;
+		String defaultRedirectUrl = contextPath + "/admin/order"; // URL mặc định nếu có lỗi
 
-		//Cập nhật số lượng sản phẩm nếu đơn bị hủy
-		List<SaleorderProducts> saleorderProducts = saleorderProductsService.findBySaleOrderId(saleOrder2.getId());
+		try {
+			SaleOrder saleOrder = saleOrderRepository.findByCode(orderCode);
+			saleOrder.setPaymentStatus(PaymentStatus.CANCELLED);
+			saleOrder.setReason(reason);
+			saleOrder.setReason(saleOrder.getReason());
 
-		for (SaleorderProducts saleorderProduct : saleorderProducts) {
-			Product product = saleorderProduct.getProduct(); // Lấy sản phẩm
-			Integer quantity = saleorderProduct.getQuantity(); // Lấy số lượng sản phẩm
-			if (product != null && quantity != null) {
-				product.setQuantity(product.getQuantity() + quantity);
-				productService.save(product);
+			//Cập nhật số lượng sản phẩm nếu đơn bị hủy
+			List<SaleorderProducts> saleorderProducts = saleorderProductsService.findBySaleOrderId(saleOrder.getId());
+
+			for (SaleorderProducts saleOrderProduct : saleorderProducts) {
+				Product product = saleOrderProduct.getProduct(); // Lấy sản phẩm
+				Integer quantity = saleOrderProduct.getQuantity(); // Lấy số lượng sản phẩm
+				if (product != null && quantity != null) {
+					product.setQuantity(product.getQuantity() + quantity);
+					productService.save(product);
+				}
 			}
+			if (isValidRedirectUrl(returnUrl, contextPath)) {
+				redirectPath = returnUrl;
+			} else {
+				redirectPath = defaultRedirectUrl;
+			}
+			saleOrderRepository.save(saleOrder);
+			return new ResultUtil("success", "Đã hủy đơn hàng '" + orderCode + "' thành công!", redirectPath);
+		}catch (Exception e){
+			if (isValidRedirectUrl(returnUrl, contextPath)) {
+				redirectPath = returnUrl;
+			} else {
+				redirectPath = defaultRedirectUrl;
+			}
+			return new ResultUtil("error", "Lỗi khi hủy đơn hàng: ",redirectPath);
 		}
-		saleOrderRepository.save(saleOrder2);
 	}
 
 	public SaleOrder findById(int id) {
@@ -241,6 +262,18 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 
 	public Double getTotalSalesValue(){
 		return saleOrderRepository.getTotalSalesValue();
+	}
+
+	private boolean isValidRedirectUrl(String url, String contextPath) {
+		if (url == null || url.trim().isEmpty()) {
+			return false;
+		}
+		try {
+			URI uri = new URI(url);
+			return !uri.isAbsolute() && url.startsWith(contextPath + "/admin/");
+		} catch (URISyntaxException e) {
+			return false;
+		}
 	}
 
 }
