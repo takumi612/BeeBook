@@ -52,7 +52,7 @@ public class ProductService extends BaseService<Product,Integer> {
 	@Value("${app.upload.dir:${user.home}}")
 	private String uploadDir;
 
-	@Value("${app.upload.default")
+	@Value("${app.upload.default}")
 	private String defaultPath;
 
     public ProductService(CategoriesService categoriesService, AuthorService authorService, ManufacturerService manufacturerService, PromotionService promotionService, ProductImageService productImageService, ProductRepository productRepository) {
@@ -118,6 +118,9 @@ public class ProductService extends BaseService<Product,Integer> {
 		Product product = transferDtoToProduct(productDetailDto);
 		MultipartFile productAvatar = productDetailDto.getProductAvatar();
 		MultipartFile[] productPictures =productDetailDto.getProductPictures();
+
+		log.info(uploadDir);
+		log.info(defaultPath);
 
 
 		// có đẩy avartar ??? => xóa avatar cũ đi và thêm avatar mới
