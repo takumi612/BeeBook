@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -80,5 +81,9 @@ public class SaleOrderDto {
         this.paymentDisplayStatus = saleOrder.getPaymentStatus() != null ? paymentStatus.getDisplayValue() : "";
         this.paymentDisplayType = saleOrder.getPaymentType() != null ? paymentType.getDisplayValue() :"";
 
+    }
+
+    public Timestamp getCreatedTimestamp() {
+        return (this.createdDate == null) ? null : Timestamp.valueOf(this.createdDate);
     }
 }

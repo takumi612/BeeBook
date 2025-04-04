@@ -134,11 +134,10 @@
                     <div>
 <%--                        <h5 class="mb-0">Đơn hàng #${order.id}</h5>--%>
                         <h5>
-                            <fmt:parseDate value="${order.createdDate}" pattern="yyyy-MM-dd'T'HH:mm:ss" var="parsedDate" type="both" />
-                            <fmt:formatDate value="${parsedDate}" pattern="dd/MM/yyyy" /></h5>
+                            <fmt:formatDate value="${order.getCreatedTimestamp()}" pattern="dd/MM/yyyy HH:mm:ss" />
                         </h5>
                     </div>
-                    <div>Cách thanh toán:
+                    <div>Cách thanh toán:order.createdDatea
                             <c:if test="${not empty order.paymentType}">
                                 ${order.paymentDisplayType}
                             </c:if>
