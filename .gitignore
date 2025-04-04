@@ -1,0 +1,7 @@
+# File cấu hình IntelliJ
+.idea/workspace.xml
+.idea/tasks.xml
+
+application-*.yml
+!application-example.yml
+.src/main/resources/img/upload/product/avatar
