@@ -106,6 +106,23 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 		return response;
 }
 
+	@Transactional
+	public SaleOrder save(User userLogined, SaleOrder saleOrder) {
+
+		String userName = getUserName(userLogined);
+		if (saleOrder.getId() == null) {
+			super.save(saleOrder); // thêm mới
+			saleOrder.getSaleOrderProducts().
+					forEach(saleorderProductsService::save
+					);
+			return saleOrder;
+		} else {
+			saleOrder.setUpdatedDate(LocalDateTime.now());
+			saleOrder.setUpdatedBy(userName);
+			return super.save(saleOrder); // cập nhật
+		}
+	}
+
 	public void deleteOrderProduct(int id){
 		Optional<SaleOrder> saleorderOptional = saleOrderRepository.findById(id);
 		if (saleorderOptional.isPresent()) {
@@ -136,14 +153,14 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 			//Cập nhật số lượng sản phẩm nếu đơn bị hủy
 			List<SaleorderProducts> saleorderProducts = saleorderProductsService.findBySaleOrderId(saleOrder.getId());
 
-			for (SaleorderProducts saleOrderProduct : saleorderProducts) {
-				Product product = saleOrderProduct.getProduct(); // Lấy sản phẩm
-				Integer quantity = saleOrderProduct.getQuantity(); // Lấy số lượng sản phẩm
-				if (product != null && quantity != null) {
-					product.setQuantity(product.getQuantity() + quantity);
-					productService.save(product);
-				}
-			}
+			saleorderProducts.stream()
+					.filter(sop -> sop.getProduct()!=null && sop.getQuantity()!=null)
+					.forEach(sop-> {
+						Product product = sop.getProduct();
+						product.setQuantity(product.getQuantity() + sop.getQuantity());
+						productService.save(product);
+					});
+
 			if (isValidRedirectUrl(returnUrl, contextPath)) {
 				redirectPath = returnUrl;
 			} else {
@@ -220,28 +237,6 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 			jsonResult.put("success", messageBuilder.toString());
 
 			return ResponseEntity.ok(jsonResult);
-		}
-	}
-
-
-	@Transactional
-	public SaleOrder save(User userLogined, SaleOrder saleOrder) {
-
-		String userName = getUserName(userLogined);
-		if (saleOrder.getId() == null) {
-			// Tự động tạo/cập nhật mới ngày tạo theo ngày hiện tại
-			saleOrder.setCreatedDate(LocalDateTime.now());
-			saleOrder.setCreatedBy(userName);
-			super.save(saleOrder); // thêm mới
-
-			saleOrder.getSaleOrderProducts().
-					forEach(saleorderProductsService::save
-					);
-			return saleOrder;
-		} else {
-			saleOrder.setUpdatedDate(LocalDateTime.now());
-			saleOrder.setUpdatedBy(userName);
-			return super.save(saleOrder); // cập nhật
 		}
 	}
 

@@ -67,6 +67,7 @@ public class AdminProductController extends BaseController {
                               @PathVariable("productId") int productId) {
 
         Optional<Product> product=productService.findById(productId);
+
         if(product.isPresent()) {
             ProductDetailDto productDetailDto = new ProductDetailDto(product.get());
             model.addAttribute("product", productDetailDto);

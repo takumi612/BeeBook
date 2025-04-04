@@ -2,13 +2,15 @@ package beebooks.entities;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import java.time.LocalDateTime;
 
 @Setter
@@ -23,49 +25,50 @@ public abstract class BaseEntity {
 	@Column(name = "status")
 	private Boolean status = Boolean.TRUE;
 
-	@CreatedBy
+//	@CreatedBy
 	@Column(name = "created_by", updatable = false)
 	private String createdBy;
 
-	@LastModifiedBy
+//	@LastModifiedBy
 	@Column(name = "updated_by")
 	private String updatedBy;
 
-	@LastModifiedDate
+//	@LastModifiedDate
 	@Column(name = "updated_date")
 	private LocalDateTime updatedDate;
 
-	@CreatedDate
+//	@CreatedDate
 	@Column(name = "created_date")
 	private LocalDateTime createdDate;
 
-//	@PrePersist
-//	protected void onCreate() {
-//		this.createdDate = LocalDateTime.now();
-//		try {
-//			String name = SecurityContextHolder.getContext().getAuthentication().getName();
-//			if(name.equalsIgnoreCase("anonymousUser")) {
-//				this.createdBy = "Guest";
-//			}else{
-//				this.createdBy = name;
-//			}
-//		} catch (Exception e) {
-//			createdBy = "Guest";
-//		}
-//	}
-//
-//	@PreUpdate
-//	protected void onUpdate() {
-//		this.updatedDate = LocalDateTime.now();
-//		try {
-//			String name = SecurityContextHolder.getContext().getAuthentication().getName();
-//			if(name.equalsIgnoreCase("anonymousUser")) {
-//				this.updatedBy = "Guest";
-//			}else{
-//				this.updatedBy = name;
-//			}		} catch (Exception e) {
-//			updatedBy = "Guest";
-//		}
-//	}
+	@PrePersist
+	protected void onCreate() {
+		this.createdDate = LocalDateTime.now();
+		try {
+			String name = SecurityContextHolder.getContext().getAuthentication().getName();
+			if(name.equalsIgnoreCase("anonymousUser")) {
+				this.createdBy = "Guest";
+			}else{
+				this.createdBy = name;
+			}
+		} catch (Exception e) {
+			createdBy = "Guest";
+		}
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		this.updatedDate = LocalDateTime.now();
+		try {
+			String name = SecurityContextHolder.getContext().getAuthentication().getName();
+			if(name.equalsIgnoreCase("anonymousUser")) {
+				this.updatedBy = "Guest";
+			}else{
+				this.updatedBy = name;
+			}
+		} catch (Exception e) {
+			updatedBy = "Guest";
+		}
+	}
 
 }

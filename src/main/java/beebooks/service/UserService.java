@@ -1,7 +1,6 @@
 package beebooks.service;
 
 import beebooks.entities.Role;
-import beebooks.repository.RoleRepository;
 import beebooks.specifications.UserSpecification;
 import beebooks.entities.User;
 import beebooks.repository.UserRepository;
@@ -9,6 +8,7 @@ import beebooks.ultilities.searchUtil.UserSearch;
 import beebooks.ultilities.ResultUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,12 +20,12 @@ import java.util.Set;
 public class UserService extends BaseService<User,Integer> {
 
 	private final UserRepository userRepository;
-	private final RoleRepository roleRepository;
+	private final RoleService roleService;
 
-	public UserService(UserRepository userRepository, RoleRepository roleRepository) {
+	public UserService(UserRepository userRepository, RoleService roleService) {
 		super(userRepository);
 		this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        this.roleService = roleService;
     }
 
 	public Optional<User> loadUserByUsername(String userName) {
@@ -60,15 +60,20 @@ public class UserService extends BaseService<User,Integer> {
 		}
 	}
 
+	// Nếu cho phép update lên Role Admin nen tao them 1 role Master
 	public ResultUtil updateRole(UserSearch userSearchModel) {
 		Optional<User> userOptional = userRepository.findById(userSearchModel.getId());
 		User user;
 		if (userOptional.isPresent()) {
 			user = userOptional.get();
-			Role role = roleRepository.findById(userSearchModel.getRoleId()).orElse(null);
-			user.addRoles(role);
-			userRepository.save(user);
-			return new ResultUtil("succesMessage", "Update Thành công");
+			Optional<Role> role = roleService.findById(userSearchModel.getRoleId());
+			if(role.isPresent()) {
+				user.addRoles(role.get());
+				userRepository.save(user);
+				return new ResultUtil("succesMessage", "Update Thành công");
+			}else{
+				return new ResultUtil("errorMessage", "Không tồn tại Role");
+			}
 		}else{
 			return new ResultUtil("errorMessage", "Không tồn tại User");
 		}
@@ -84,4 +89,42 @@ public class UserService extends BaseService<User,Integer> {
 		return userRepository.findByEmail(user.getEmail());
 	}
 
+	@Transactional
+    public ResultUtil registerUser(User user) {
+
+		// đoạn này có theer hơi thừa vì front xử lý rồi
+		if (user.getUsername() == null){
+			return new ResultUtil("error","Tài khoản không được để trống!");
+		} else if (user.getEmail() == null) {
+			return new ResultUtil("error","Email không được để trống!");
+		} else if (user.getPhone() == null) {
+			return new ResultUtil("error","Số điện thoại không được để trống!");
+		} else if (user.getPassword() == null) {
+			return new ResultUtil("error","Mật khẩu không được để trống!");
+		} else if (user.getAddress() == null) {
+			return new ResultUtil("error","Địa chỉ không được để trống!");
+		}
+
+		Optional<User> usersMail = checkEmailRegister(user);
+		Optional<User> usersName = checkUserNameRegister(user);
+
+		if(usersMail.isPresent()){
+			return new ResultUtil("error","Email của bạn đã được đăng ký !");
+		}
+
+		if(usersName.isPresent()){
+			return new ResultUtil("error","Tài khoản của bạn đã được đăng ký !");
+		}
+
+		try {
+			user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(4)));
+			Role role = roleService.loadRoleByRoleName("USER");
+			user.addRoles(role);
+			save(user);
+			return new ResultUtil("success","Cảm ơn bạn đã đăng ký thành công!!");
+		}catch (Exception e){
+			return new ResultUtil("error","Xảy ra lỗi khi đăng ký tài khoản.");
+		}
+
+    }
 }

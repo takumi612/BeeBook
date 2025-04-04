@@ -12,6 +12,4 @@ Các Spring Module được sử dụng trong bài:
 Note: 
 - Chưa tạo chức năng thêm admin nên cần thêm bằng tay trong DB
 - Spring hiện tại đang sử dụng phiên bản 2., hiện tại Spring đã lên 3., sự khác biệt nằm ở Spring Security và thư viện javax đã đc đổi sang jakarta
-- Chưa sử dụng RestApi
-- Tập trung chủ yếu vào nghiệp vụ quản lý hóa đơn (SaleOrder) và quản lý sản phẩm (Product)
-  
+- Chưa sử dụng RestApi 

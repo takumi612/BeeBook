@@ -137,7 +137,7 @@
                             <fmt:formatDate value="${order.getCreatedTimestamp()}" pattern="dd/MM/yyyy HH:mm:ss" />
                         </h5>
                     </div>
-                    <div>Cách thanh toán:order.createdDatea
+                    <div>Cách thanh toán:
                             <c:if test="${not empty order.paymentType}">
                                 ${order.paymentDisplayType}
                             </c:if>

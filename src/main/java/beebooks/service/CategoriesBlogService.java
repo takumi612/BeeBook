@@ -21,7 +21,6 @@ public class CategoriesBlogService extends BaseService<CategoriesBlog, Integer> 
 		this.repository = repository;
 	}
 
-
 	public Page<CategoriesBlog> search(BlogSearch searchModel) {
 		Specification<CategoriesBlog> spec = CategoriesBlogSpecification.getCategoriesBlogSpecification(searchModel);
 		return repository.findAll(spec,searchModel.getPage());
