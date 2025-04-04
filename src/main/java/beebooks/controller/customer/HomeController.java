@@ -83,7 +83,7 @@ public class HomeController extends BaseController {
 			String to = subscribe.getEmail();
 			String subject = "XÁC NHẬN " + subscribe.getEmail() + " ĐÃ ĐĂNG KÝ THÀNH CÔNG!";
 			String text = "Chúng tôi sẽ gửi cho bạn những thông tin mới nhất về Hiệu Sách"  + ".";
-			mailService.sendEmail(to, subject, text);
+			mailService.sendEmailAsync(to, subject, text);
 			return ResponseEntity.ok(jsonResult);
 		} else {
 			jsonResult.put("message", "Email này đã đăng ký");

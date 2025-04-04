@@ -93,11 +93,13 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 
 			response = new ResultUtil("success", "Đặt hàng thành công");
 
-			// Gửi email đơn hàng
-			String to = saleOrder.getCustomerEmail();
-			String subject = "XÁC NHẬN ĐƠN HÀNG #" + saleOrder.getCode();
-			String text = "Cảm ơn bạn đã đặt hàng. Mã đơn hàng của bạn là #" + saleOrder.getCode() + ".";
-			mailService.sendEmail(to, subject, text);
+				// Gửi email đơn hàng được sử dụng bất đồng bộ
+				String to = saleOrder.getCustomerEmail();
+				String subject = "XÁC NHẬN ĐƠN HÀNG #" + saleOrder.getCode();
+				String text = "Cảm ơn bạn đã đặt hàng. Mã đơn hàng của bạn là #" + saleOrder.getCode() + ".";
+				mailService.sendEmailAsync(to, subject, text);
+
+
 		} catch (Exception e) {
 			return new ResultUtil("error", "Đã xảy ra lỗi: " + e.getMessage());
 		}

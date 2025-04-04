@@ -61,9 +61,12 @@ public class CartController extends BaseController {
         Cart cart = (Cart) session.getAttribute("cart");
         if (cart != null) {
             ResultUtil resultUtil = saleOrderService.checkOutCart(userLogined,cart,saleOrder);
+
             if(Objects.equals(resultUtil.getResult(), "error")){
+
                 redirectAttributes.addFlashAttribute(resultUtil.getResult(), resultUtil.getMessage());
                 return "redirect:/cart/view";
+
             }else if(Objects.equals(resultUtil.getResult(), "success")){
                 // Clear the cart after successful checkout
                 cart = new Cart();

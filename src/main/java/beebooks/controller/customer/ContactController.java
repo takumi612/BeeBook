@@ -45,7 +45,7 @@ public class ContactController{
 		String to = contact.getEmail();
 		String subject = "XÁC NHẬN " + contact.getName() + " ĐÃ ĐĂNG KÝ LIÊN HỆ THÀNH CÔNG!";
 		String text = "Chúng tôi sẽ liên hệ bạn trong thời gian sớm nhất. Xin cảm ơn"  + ".";
-		mailService.sendEmail(to, subject, text);
+		mailService.sendEmailAsync(to, subject, text);
 
 		return "customer/contact";
 

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -34,5 +35,11 @@ public class MailServiceImpl implements MailService {
         } catch (MessagingException e) {
             log.info("Send email failed: {}", e.getMessage());
         }
+    }
+
+    @Override
+    @Async
+    public void sendEmailAsync(String to, String subject, String text) {
+        sendEmail(to, subject, text);
     }
 }
