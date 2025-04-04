@@ -1,28 +1,5 @@
-server:
-    port: 8080
-spring:
-    datasource:
-        driver-class-name: com.mysql.cj.jdbc.Driver
-        password: bac6122003
-        url: jdbc:mysql://localhost:3306/bookstore2?allowPublicKeyRetrieval=true&useSSL=false
-        username: root
-    jpa:
-        database-platform: org.hibernate.dialect.MySQL8Dialect
-        hibernate:
-            ddl-auto: update
-        show-sql: true
-    servlet:
-        multipart:
-            maxFileSize: -1
-    mail:
-        host: smtp.gmail.com
-        port: 587
-        username: zenofuture@gmail.com
-        password: aqpm adbk hmdu mqyn
-app:
-    upload:
-        dir: ${user.dir}/src/main/resources/img/upload
-        default: ${user.dir}/src/main/resources/img/upload/product/avatar/conan.png
+spring.profiles.active=${SPRING_PROFILES_ACTIVE:dev}
+
 
 
 
