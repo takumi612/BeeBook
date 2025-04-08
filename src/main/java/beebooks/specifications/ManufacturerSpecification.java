@@ -27,7 +27,7 @@ public class ManufacturerSpecification {
     private static Specification<Manufacturer> keywordLike(String keyword) {
         return (root, query, criteriaBuilder) -> {
             if (!StringUtils.hasText(keyword)) {
-                return null;
+                return criteriaBuilder.conjunction();
             }
             String likePattern = "%" + keyword + "%";
             return criteriaBuilder.or(

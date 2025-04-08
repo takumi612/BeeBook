@@ -67,16 +67,19 @@ public class SaleOrderSpecification {
                 endDate.plusDays(1).atStartOfDay().minusNanos(1) : null;
 
         return (root, query, criteriaBuilder) -> {
-            if (startDateTime == null && endDateTime == null) {
-                return criteriaBuilder.conjunction();
+            List <Predicate> predicates = new ArrayList<>();
+            if (startDateTime != null && endDateTime != null) {
+                predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), startDateTime));
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), endDateTime));
+            }else{
+                if(startDateTime != null){
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), startDateTime));
+                }
+                if(endDateTime != null){
+                    predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), endDateTime));
+                }
             }
-            if (startDateTime != null && endDateTime == null) {
-                return criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), startDateTime);
-            }
-            if (startDateTime == null) {
-                return criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), endDateTime);
-            }
-            return criteriaBuilder.between(root.get("createdDate"), startDateTime, endDateTime);
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
     }
 
@@ -84,7 +87,7 @@ public class SaleOrderSpecification {
     public static Specification<SaleOrder> searchByStatus(String status) {
         return (root, query, criteriaBuilder) ->
         {
-                if(status == null || status.isEmpty()){
+                if(status == null){
                     return criteriaBuilder.conjunction();
                 }
                 PaymentStatus paymentStatus = PaymentStatus.valueOf(status);

@@ -20,7 +20,7 @@ public class ProductSpecification {
 
     private static Specification<Product> categoryIdEquals(Integer categoryId) {
         return (root, query, criteriaBuilder) -> {
-            if (categoryId == null|| categoryId==0) {
+            if (categoryId == null || categoryId==0) {
                 return criteriaBuilder.conjunction();
             }
             return criteriaBuilder.equal(root.get("categories").get("id"), categoryId);

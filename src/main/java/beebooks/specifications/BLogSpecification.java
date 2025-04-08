@@ -23,11 +23,10 @@ public class BLogSpecification {
 
     private static Specification<Blog> categoryIdEquals(Integer categoryId) {
         return (root, query, criteriaBuilder) -> {
-            if (categoryId == null) {
-                return null;
+            if (categoryId == null || categoryId==0) {
+                return criteriaBuilder.conjunction();
             }
-            Join<Product, Categories> categoriesJoin = root.join("categories", JoinType.INNER);
-            return criteriaBuilder.equal(categoriesJoin.get("id"), categoryId);
+            return criteriaBuilder.equal(root.get("categories").get("id"), categoryId);
         };
     }
 
