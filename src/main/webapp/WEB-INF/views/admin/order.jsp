@@ -59,12 +59,13 @@
                             <sf:input path="keyword" type="text" id="keyword" name="keyword" class="form-control"
                                                                 placeholder="Search"/>
                         </div>
-
+                        <jsp:useBean id="now" class="java.util.Date" />
                         <!-- Phần filter theo ngày -->
                         <form id="dateRangeFilterForm" method="get" class="d-flex align-items-end">
                             <div class=" " >
                                 <label for="startDate" class="form-label">From Date</label>
-                                <sf:input path="startDate" type="date" class="form-control" id="startDate" name="startDate"/>
+                                <fmt:formatDate value='${now}' pattern='yyyy-MM-dd'/>
+                                <sf:input path="startDate" type="date" class="form-control" id="startDate" name="startDate" value = "${formateDate}" />
                             </div>
                             <span style="margin-right: 5px; width: 10px;" ></span>
 
@@ -272,7 +273,7 @@
         };
 
         $.ajax({
-            url: '/admin/orderProduct/updateStatus',
+            url: '${base }/admin/orderProduct/updateStatus',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),

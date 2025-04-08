@@ -69,7 +69,7 @@
                         </c:if>
 
                         <div class="card-body">
-                            <h4 class="header-title">Thêm sản phẩm</h4>
+                            <h4 class="header-title">Thêm/Cập nhật sản phẩm</h4>
                             <!-- Dạng 2 :sử dụng spring-form -->
                             <sf:form modelAttribute="product" class="needs-validation"
                                      novalidate="" action="${base }/admin/addProduct"
@@ -80,7 +80,7 @@
                                 <sf:hidden path="createdBy" />
 
                                 <sf:input type="hidden" path="avatar" name="avatar" id="avatar" class="form-control"/>
-                                <sf:input type="hidden" path="productImage" name="productImage" id="productImage" class="form-control"/>
+                                <sf:input type="hidden" path="images" name="productImage" id="productImage" class="form-control"/>
 
 
                                 <div class="form-row">
@@ -168,16 +168,60 @@
 
                                     <div class="row">
                                         <div class="col-md-4 mb-3">
-                                            <label for="validationCustom02">Ảnh sản phẩm</label>
-                                            <sf:input path="productAvatar" type="file" class="form-control" name="productAvatar"/>
-                                            <div class="invalid-feedback">Thêm ảnh sản phẩm!</div>
+                                            <label>Ảnh sản phẩm</label>
+                                            <div class="d-flex flex-column">
+                                                <!-- Hiển thị ảnh hiện tại nếu có -->
+                                                <c:if test="${not empty product.avatar}">
+                                                    <div class="mb-2 position-relative" id="current-avatar-container">
+                                                        <img src="${base}/upload/${product.avatar}" alt="Ảnh sản phẩm" class="img-thumbnail" style="max-height: 150px;">
+                                                    </div>
+                                                </c:if>
+
+                                                <!-- Input tải lên ảnh mới -->
+                                                <sf:input path="productAvatar" type="file" class="form-control" id="productAvatarInput" onchange="previewAvatar(this)"/>
+
+                                                <!-- Vùng hiển thị xem trước ảnh mới -->
+                                                <div id="avatar-preview" class="mt-2" style="display: none;">
+                                                    <img src="" id="avatar-preview-img" class="img-thumbnail" style="max-height: 150px;">
+                                                </div>
+
+                                                <div class="invalid-feedback">Thêm ảnh sản phẩm!</div>
+                                            </div>
                                         </div>
 
-                                        <div class="col-md-4 mb-3">
-                                            <label for="validationCustom02">Danh sách ảnh sản phẩm</label>
-                                            <sf:input path="productPictures" type="file" class="form-control" name="productPictures"
-                                                   id="validationCustom02" multiple="multiple"/>
-                                            <div class="invalid-feedback">Thêm danh sách ảnh sản phẩm!</div>
+                                        <div class="col-md-8 mb-3">
+                                            <label>Danh sách ảnh sản phẩm</label>
+                                            <div class="d-flex flex-column">
+                                                <!-- Hiển thị danh sách ảnh hiện tại -->
+                                                <c:if test="${not empty product.images}">
+                                                    <div class="mb-2" id="product-images-container">
+                                                        <div class="d-flex flex-wrap">
+                                                            <c:forEach items="${product.images}" var="image" varStatus="loop">
+                                                                <div class="position-relative m-1 product-image-item" id="img-${loop.index}">
+                                                                    <img src="${base}/upload/${image.path}" class="img-thumbnail" style="height: 100px; width: 100px; object-fit: cover;" alt=""/>
+                                                                    <button type="button" class="btn btn-sm btn-danger position-absolute" style="top: 0; right: 0;"
+                                                                            onclick="removeProductImage('${image.path}', 'img-${loop.index}')">
+                                                                        <i class="fa fa-times"></i>
+                                                                    </button>
+                                                                </div>
+                                                            </c:forEach>
+                                                        </div>
+                                                    </div>
+                                                </c:if>
+                                                <!-- Input tải lên ảnh mới -->
+                                                <sf:input path="productPictures" type="file" class="form-control" id="productPicturesInput"
+                                                          multiple="multiple" onchange="previewProductImages(this)"/>
+
+                                                <!-- Vùng hiển thị xem trước ảnh mới -->
+                                                <div id="product-images-preview" class="mt-2 d-flex flex-wrap">
+                                                    <!-- Ảnh xem trước sẽ được thêm vào đây bởi JavaScript -->
+                                                </div>
+
+                                                <div class="invalid-feedback">Thêm danh sách ảnh sản phẩm!</div>
+                                            </div>
+
+                                            <sf:input path="removedImages" type="hidden" id="imagesToDelete" name="imagesToDelete" value=""/>
+
                                         </div>
 
                                         <div class="col-md-4 mb-3">
@@ -213,8 +257,6 @@
                                     Lưu
                                 </button>
                             </sf:form>
-
-                            <!-- Dạng 3 :sử dụng ajax -->
                         </div>
                     </div>
                 </div>
@@ -296,6 +338,78 @@
             }).showToast();
             </c:if>
         });
+
+        $(document).ready(function() {
+            // Code hiện tại của bạn vẫn giữ nguyên
+
+            // Các biến toàn cục để theo dõi trạng thái ảnh
+            window.imagesToDelete = [];
+        });
+
+        // Xem trước ảnh đại diện khi chọn file mới
+        function previewAvatar(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $('#avatar-preview-img').attr('src', e.target.result);
+                    $('#avatar-preview').show();
+                    // Ẩn ảnh hiện tại nếu có
+                    $('#current-avatar-container').hide();
+                    // Reset flag xóa avatar
+                    $('#removeAvatarFlag').val('false');
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // // Xóa ảnh đại diện hiện tại
+        // function removeAvatar() {
+        //     $('#current-avatar-container').hide();
+        //     $('#removeAvatarFlag').val('true');
+        //     $('#productAvatarInput').val(''); // Xóa file đã chọn nếu có
+        // }
+
+        // Xem trước nhiều ảnh sản phẩm khi chọn files mới
+        function previewProductImages(input) {
+            var preview = $('#product-images-preview');
+            preview.html(''); // Xóa các preview cũ
+
+            if (input.files && input.files.length > 0) {
+                for (var i = 0; i < input.files.length; i++) {
+                    var reader = new FileReader();
+                    reader.onload = (function(idx) {
+                        return function(e) {
+                            var imgContainer = $('<div class="position-relative m-1 product-image-preview">');
+                            var img = $('<img>').attr({
+                                'src': e.target.result,
+                                'class': 'img-thumbnail',
+                                'style': 'height: 100px; width: 100px; object-fit: cover;'
+                            });
+
+                            var removeBtn = $('<button type="button" class="btn btn-sm btn-danger position-absolute" style="top: 0; right: 0;">').html('<i class="fa fa-times"></i>');
+                            removeBtn.click(function() {
+                                $(this).parent().remove();
+                            });
+
+                            imgContainer.append(img).append(removeBtn);
+                            preview.append(imgContainer);
+                        }
+                    })(i);
+                    reader.readAsDataURL(input.files[i]);
+                }
+            }
+        }
+
+        // Xóa ảnh sản phẩm từ danh sách
+        function removeProductImage(imagePath, containerId) {
+            // Thêm ID vào danh sách cần xóa
+            window.imagesToDelete = window.imagesToDelete || [];
+            window.imagesToDelete.push(imagePath);
+            $('#imagesToDelete').val(window.imagesToDelete.join(','));
+            console.log(window.imagesToDelete);
+            // Ẩn hình ảnh khỏi UI
+            $('#' + containerId).hide();
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             <c:if test="${not empty errorMessage}">

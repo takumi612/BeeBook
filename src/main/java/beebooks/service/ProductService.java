@@ -2,12 +2,17 @@ package beebooks.service;
 
 import beebooks.dto.ProductDetailDto;
 import beebooks.dto.ProductProjection;
+import beebooks.entities.Images;
+import beebooks.repository.AuthorRepository;
+import beebooks.repository.CategoriesRepository;
+import beebooks.repository.ImageRepository;
+import beebooks.repository.ManufacturerRepository;
+import beebooks.repository.PromotionRepository;
 import beebooks.ultilities.Cart;
 import beebooks.ultilities.CartItem;
 import beebooks.ultilities.ResultUtil;
 import beebooks.ultilities.searchUtil.ProductSearch;
 import beebooks.entities.Product;
-import beebooks.entities.ProductImage;
 import beebooks.specifications.ProductSpecification;
 import beebooks.repository.ProductRepository;
 import com.github.slugify.Slugify;
@@ -42,11 +47,11 @@ import java.util.Optional;
 @Service
 public class ProductService extends BaseService<Product,Integer> {
 
-	private final CategoriesService categoriesService;
-	private final AuthorService authorService;
-	private final ManufacturerService manufacturerService;
-	private final PromotionService promotionService;
-	private final ProductImageService productImageService;
+	private final CategoriesRepository categoriesRepository;
+	private final AuthorRepository authorRepository;
+	private final ManufacturerRepository manufacturerRepository;
+	private final PromotionRepository promotionRepository;
+	private final ImageRepository imageRepository;
 	private final ProductRepository productRepository;
 
 	@Value("${app.upload.dir:${user.home}}")
@@ -55,13 +60,13 @@ public class ProductService extends BaseService<Product,Integer> {
 	@Value("${app.upload.default}")
 	private String defaultPath;
 
-    public ProductService(CategoriesService categoriesService, AuthorService authorService, ManufacturerService manufacturerService, PromotionService promotionService, ProductImageService productImageService, ProductRepository productRepository) {
+    public ProductService(CategoriesRepository categoriesRepository, AuthorRepository authorRepository, ManufacturerRepository manufacturerRepository, PromotionRepository promotionRepository, ImageRepository imageRepository, ProductRepository productRepository) {
         super(productRepository);
-        this.categoriesService = categoriesService;
-        this.authorService = authorService;
-        this.manufacturerService = manufacturerService;
-        this.promotionService = promotionService;
-        this.productImageService = productImageService;
+        this.categoriesRepository = categoriesRepository;
+        this.authorRepository = authorRepository;
+        this.manufacturerRepository = manufacturerRepository;
+        this.promotionRepository = promotionRepository;
+        this.imageRepository = imageRepository;
         this.productRepository = productRepository;
     }
 
@@ -84,7 +89,6 @@ public class ProductService extends BaseService<Product,Integer> {
         return productPage.map(ProductDetailDto::new);
 	}
 
-
 	public Page<ProductProjection> findAllToDto(Pageable pageable){
 		return productRepository.findAllProjectedByStatus(true,pageable);
 	}
@@ -98,7 +102,7 @@ public class ProductService extends BaseService<Product,Integer> {
 	}
 
 	@Transactional
-	public ResultUtil addProduct( ProductDetailDto productDetailDto) throws IOException {
+	public ResultUtil saveProduct(ProductDetailDto productDetailDto) throws IOException {
 
 		boolean isNewProduct = (productDetailDto.getId() == null);
 		boolean titleExists = !findProductByTitle(productDetailDto.getTitle()).isEmpty();
@@ -119,10 +123,6 @@ public class ProductService extends BaseService<Product,Integer> {
 		MultipartFile productAvatar = productDetailDto.getProductAvatar();
 		MultipartFile[] productPictures =productDetailDto.getProductPictures();
 
-		log.info(uploadDir);
-		log.info(defaultPath);
-
-
 		// có đẩy avartar ??? => xóa avatar cũ đi và thêm avatar mới
 		if (productAvatar != null && !productAvatar.isEmpty()) {
 			if (productDetailDto.getAvatar() != null && !productDetailDto.getAvatar().isEmpty()) {
@@ -139,21 +139,20 @@ public class ProductService extends BaseService<Product,Integer> {
 			}
 		}
 		// có đẩy pictures ???
-		if (productPictures != null && productPictures.length > 0) {
-			// Delete existing product images
-			if (productDetailDto.getProductImage() != null && !productDetailDto.getProductImage().isEmpty()) {
-				for (ProductImage path : productDetailDto.getProductImage()) {
-					deleteFile(path.getPath());
-					productImageService.deleteByProductId(product.getId());
+		if (productPictures != null) {
+			if (productDetailDto.getRemovedImages() != null) {
+				for (String path : productDetailDto.getRemovedImages()) {
+					deleteFile(path);
+					imageRepository.deleteProductImageByPath(path);
 				}
 			}
 			// Save new product pictures
 			savePictures(product, productPictures);
-		}else if(productDetailDto.getProductImage()!=null && !productDetailDto.getProductImage().isEmpty()){
-			product.setProductImage(productDetailDto.getProductImage());
+		}else if(productDetailDto.getImages()!=null && !productDetailDto.getImages().isEmpty()){
+			product.setImages(productDetailDto.getImages());
 		}
 		product.setSeo(new Slugify().slugify(product.getTitle()));
-		return super.save(product);
+		return productRepository.save(product);
 	}
 
 	@Transactional
@@ -177,15 +176,18 @@ public class ProductService extends BaseService<Product,Integer> {
 			log.error("Error deleting file: {}", filePath, e);
 		}
 	}
-	private void savePictures(Product product,MultipartFile[] productPictures){
+	@Transactional
+    public void savePictures(Product product, MultipartFile[] productPictures){
 		Arrays.stream(productPictures)
 				.filter(pic -> pic != null && !pic.isEmpty())
 				.forEach(pic -> {
 					try{
 						String picturePath = saveFile(pic, "pictures");
-						ProductImage pi = new ProductImage();
+						Images pi = new Images();
 						pi.setPath(picturePath);
 						pi.setTitle(pic.getOriginalFilename());
+						pi.setProduct(product);
+						imageRepository.save(pi);
 						product.addProductImage(pi);
 					}catch (IOException e){
 						log.error("Error saving productPicture");
@@ -314,17 +316,17 @@ public class ProductService extends BaseService<Product,Integer> {
 
 	private Product transferDtoToProduct(ProductDetailDto productDetailDto) {
 		Product product = new Product(productDetailDto);
-		product.setAuthor(authorService.findById(productDetailDto.getAuthorId()).orElse(null));
-		product.setCategories(categoriesService.findById(productDetailDto.getCategoriesId()).orElse(null));
-		product.setManufacturer(manufacturerService.findById(productDetailDto.getManufacturerId()).orElse(null));
-		product.setPromotion(promotionService.findById(productDetailDto.getPromotionId()).orElse(null));
+		product.setAuthor(authorRepository.findById(productDetailDto.getAuthorId()).orElse(null));
+		product.setCategories(categoriesRepository.findById(productDetailDto.getCategoriesId()).orElse(null));
+		product.setManufacturer(manufacturerRepository.findById(productDetailDto.getManufacturerId()).orElse(null));
+		product.setPromotion(promotionRepository.findById(productDetailDto.getPromotionId()).orElse(null));
 		return product;
 	}
 
 	public void addProductFormAttributes(Model model) {
-		model.addAttribute("categories", categoriesService.findAll());
-		model.addAttribute("manufacturer", manufacturerService.findAll());
-		model.addAttribute("author", authorService.findAll());
-		model.addAttribute("promotion", promotionService.findAll());
+		model.addAttribute("categories", categoriesRepository.findAll());
+		model.addAttribute("manufacturer", manufacturerRepository.findAll());
+		model.addAttribute("author", authorRepository.findAll());
+		model.addAttribute("promotion", promotionRepository.findAll());
 	}
 }

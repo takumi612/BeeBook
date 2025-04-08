@@ -34,14 +34,14 @@ public class Blog extends BaseEntity{
 	private CategoriesBlog categoriesBlog;
 
 
-	@OneToMany(mappedBy = "blog",fetch = FetchType.LAZY)
-	private Set<BlogImage> blogImages = new HashSet<>();
-
-
-	public void addBlogImage(BlogImage _blogImage) {
-		_blogImage.setBlog(this);
-		blogImages.add(_blogImage);
-	}
+//	@OneToMany(mappedBy = "blog",fetch = FetchType.LAZY)
+//	private Set<Images> images = new HashSet<>();
+//
+//
+//	public void addBlogImage(Images _images) {
+//		_images.setBlog(this);
+//		images.add(_images);
+//	}
 	public Blog(){}
 
 	public Blog(BlogDto blogDto){

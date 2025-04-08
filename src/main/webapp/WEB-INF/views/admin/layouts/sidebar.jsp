@@ -125,7 +125,7 @@
                             </li>
 
                             <li>
-                                <a href="${base }/admin/category-blog">
+                                <a href="${base }/admin/categoryBlog">
                                     <i class="fas fa-book"></i>
                                     <span>Danh mục Blog</span>
                                 </a>

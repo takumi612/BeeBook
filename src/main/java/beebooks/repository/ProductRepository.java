@@ -23,6 +23,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> , Jpa
     @EntityGraph(attributePaths = {"author","manufacturer","promotion","categories"})
     Page<Product> findAll(Specification<Product> specification,Pageable pageable);
 
+    @EntityGraph(attributePaths = {"author","manufacturer","promotion","categories"})
+    Optional<Product> findById(Integer id);
+
     @Query("SELECT p FROM Product p WHERE p.status = true  AND LOWER(p.title) LIKE LOWER(CONCAT('%', :keyword, '%')) ")
     Page<ProductProjection> findByTitleLikeIgnoreCase(@Param("keyword")String title, Pageable pageable);
 

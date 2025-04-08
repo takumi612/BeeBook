@@ -59,7 +59,7 @@
                             <h4 class="header-title">Thêm blog</h4>
                             <!-- Dạng 2 :sử dụng spring-form -->
                             <sf:form modelAttribute="BlogDto" class="needs-validation"
-                                     novalidate="" action="${base }/admin/blog/add-blog"
+                                     novalidate="" action="${base }/admin/blog/addBlog"
                                      method="post" enctype="multipart/form-data">
 
                                 <sf:hidden path="id"/>
@@ -94,13 +94,6 @@
                                             <input type="file" class="form-control" name="productAvatar"
                                                    id="validationCustom03"/>
                                             <div class="invalid-feedback">Thêm ảnh blog!</div>
-                                        </div>
-
-                                        <div class="col-md-6 mb-3">
-                                            <label for="validationCustom04">Danh sách ảnh blog</label>
-                                            <input type="file" class="form-control" name="productPictures"
-                                                   id="validationCustom04" multiple="multiple"/>
-                                            <div class="invalid-feedback">Thêm danh sách ảnh blog!</div>
                                         </div>
                                     </div>
 

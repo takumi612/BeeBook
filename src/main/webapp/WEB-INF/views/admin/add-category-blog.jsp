@@ -17,7 +17,7 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <title>Thêm mới danh mục Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <jsp:include page="/WEB-INF/views/admin/layouts/css.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/views/admin/layouts/css.jsp"/>
 
 </head>
 
@@ -33,15 +33,15 @@
 <!-- page container area start -->
 <div class="page-container">
     <!-- sidebar menu area start -->
-    <jsp:include page="/WEB-INF/views/admin/layouts/sidebar.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/views/admin/layouts/sidebar.jsp"/>
     <!-- sidebar menu area end -->
     <!-- main content area start -->
     <div class="main-content">
         <!-- header area start -->
-        <jsp:include page="/WEB-INF/views/admin/layouts/header.jsp"></jsp:include>
+        <jsp:include page="/WEB-INF/views/admin/layouts/header.jsp"/>
         <!-- header area end -->
         <!-- page title area start -->
-        <jsp:include page="/WEB-INF/views/admin/layouts/title.jsp"></jsp:include>
+        <jsp:include page="/WEB-INF/views/admin/layouts/title.jsp"/>
         <!-- page title area end -->
         <div class="main-content-inner">
             <!-- sales report area start -->
@@ -116,8 +116,8 @@
     </div>
     <!-- page container area end -->
     <!-- offset area start -->
-    <jsp:include page="/WEB-INF/views/admin/layouts/offset.jsp"></jsp:include>
-    <jsp:include page="/WEB-INF/views/admin/layouts/js.jsp"></jsp:include>
+    <jsp:include page="/WEB-INF/views/admin/layouts/offset.jsp"/>
+    <jsp:include page="/WEB-INF/views/admin/layouts/js.jsp"/>
     <!-- internal javascript -->
     <script type="text/javascript">
         $(document).ready(function() {

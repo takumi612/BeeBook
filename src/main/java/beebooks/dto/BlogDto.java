@@ -1,9 +1,11 @@
 package beebooks.dto;
 
-import beebooks.entities.BlogImage;
+import beebooks.entities.Images;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Getter
@@ -23,9 +25,11 @@ public class BlogDto {
 
     private int categoryId;
 
-    private Set<BlogImage> blogImages;
+    private LocalDateTime createdDate;
+
+    private String createdBy;
+
+    private Set<Images> images;
 
     private MultipartFile productAvatar;
-
-    private MultipartFile[] productPictures;
 }

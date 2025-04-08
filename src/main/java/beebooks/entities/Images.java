@@ -8,8 +8,8 @@ import javax.persistence.*;
 @Setter
 @Getter
 @Entity
-@Table(name="blog_images")
-public class BlogImage extends BaseEntity{
+@Table(name="images")
+public class Images extends BaseEntity{
 	@Column(name = "title", length = 500, nullable = false)
 	private String title;
 	
@@ -17,7 +17,7 @@ public class BlogImage extends BaseEntity{
 	private String path;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "blogId")
-	private Blog blog;
+	@JoinColumn(name = "product_id")
+	private Product product;
 
 }

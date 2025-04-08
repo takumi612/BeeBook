@@ -1,7 +1,7 @@
 package beebooks.dto;
 
+import beebooks.entities.Images;
 import beebooks.entities.Product;
-import beebooks.entities.ProductImage;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.time.ZoneId;
 import java.util.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 
@@ -28,10 +29,8 @@ public class ProductDetailDto {
     private Integer quantity;//Số lượng sản phẩm
     private String shortDes;
     private String details;
-    private String avatar;
     private String seo;
     private boolean status;
-
     private String categoriesName;
     private int categoriesId;
     private String manufacturerName;
@@ -44,8 +43,11 @@ public class ProductDetailDto {
     private LocalDateTime createdDate;
     private String createdBy;
 
-    private Set<ProductImage> productImage;
+    private Set<Images> images;
 
+    private String avatar;
+
+    private List<String> removedImages;
     MultipartFile productAvatar;
     MultipartFile[] productPictures;
 
@@ -61,7 +63,7 @@ public class ProductDetailDto {
         this.avatar = product.getAvatar();
         this.seo = product.getSeo();
         this.status = product.getStatus();
-        this.productImage = product.getProductImage();
+        this.images = product.getImages();
         this.manufacturerName = product.getManufacturer().getName();
         this.manufacturerId = product.getManufacturer().getId();
         this.categoriesName = product.getCategories() != null ? product.getCategories().getName() : "";

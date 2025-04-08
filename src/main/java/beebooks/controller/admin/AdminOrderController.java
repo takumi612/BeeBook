@@ -27,7 +27,7 @@ public class AdminOrderController extends BaseController{
 	private final SaleOrderService saleorderService;
 	private final SaleOrderProductsService saleOrderProductsService;
 
-	@RequestMapping(value = { "/admin/order" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/admin/order" }, method = { RequestMethod.GET , RequestMethod.POST })
 	public String getOrder(final Model model,
 						   @ModelAttribute("searchModel")OrderSearch searchModel
 	) {
@@ -36,16 +36,6 @@ public class AdminOrderController extends BaseController{
 		model.addAttribute("orderPage", saleOrders);
 		model.addAttribute("searchModel", searchModel);
 
-		return "admin/order";
-	}
-
-	@RequestMapping(value = { "/admin/order" }, method = RequestMethod.POST)
-	public String searchOrder(final Model model,
-						   @ModelAttribute("searchModel")OrderSearch searchModel
-	) {
-		Page<SaleOrderDto> saleOrders = saleorderService.search(searchModel);
-		model.addAttribute("orderPage", saleOrders);
-		model.addAttribute("searchModel", searchModel);
 		return "admin/order";
 	}
 
@@ -74,16 +64,18 @@ public class AdminOrderController extends BaseController{
 							  HttpServletRequest request) {
 
 		String contextPath = request.getContextPath();
+
 		ResultUtil resultUtil = saleorderService.rejectOrder(orderCode,reason,returnUrl,contextPath);
 		redirectAttributes.addFlashAttribute(resultUtil.getResult(), resultUtil.getMessage());
+
 		return "redirect:" + resultUtil.getProperty();
 	}
 
-	@GetMapping("/deleteOrderProduct/{id}")
-	public String deleteOrderProduct(@PathVariable("id") Integer id) {
-		saleorderService.deleteOrderProduct(id);
-		return "redirect:/admin/order-product";
-	}
+//	@GetMapping("/deleteOrderProduct/{id}")
+//	public String deleteOrderProduct(@PathVariable("id") Integer id) {
+//		saleorderService.deleteOrderProduct(id);
+//		return "redirect:/admin/order-product";
+//	}
 
 	@PostMapping( "/admin/orderProduct/updateStatus")
 	public String updatePaymentStatus(@RequestBody PaymentStatusDto paymentStatusDto){

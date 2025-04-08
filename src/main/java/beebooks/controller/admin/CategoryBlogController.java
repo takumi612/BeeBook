@@ -38,10 +38,9 @@ public class CategoryBlogController extends BaseController {
 
 
     @RequestMapping(value = {"/admin/addCategoryBlog"}, method = RequestMethod.POST)
-    public String addCategoryBlog(final @ModelAttribute("categoriesBlog") CategoriesBlog categoriesBlog,
-                                  @ModelAttribute("userLogined") User userLogined) {
+    public String addCategoryBlog(final @ModelAttribute("categoriesBlog") CategoriesBlog categoriesBlog) {
         categoriesBlogService.save(categoriesBlog);
-        return "redirect:/admin/category-blog";
+        return "redirect:/admin/categoryBlog";
     }
 
 

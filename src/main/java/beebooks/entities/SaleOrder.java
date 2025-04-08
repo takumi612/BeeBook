@@ -66,9 +66,9 @@ public class SaleOrder extends BaseEntity {
 		this.paymentStatus = PaymentStatus.PENDING;
 	}
 
-    public void addSaleOrderProducts(SaleorderProducts _saleOrderProducts) {
-		_saleOrderProducts.setSaleOrder(this);
-		saleOrderProducts.add(_saleOrderProducts);
+    public void addSaleOrderProducts(SaleorderProducts saleOrderProducts) {
+		saleOrderProducts.setSaleOrder(this);
+		this.saleOrderProducts.add(saleOrderProducts);
 	}
 
 }

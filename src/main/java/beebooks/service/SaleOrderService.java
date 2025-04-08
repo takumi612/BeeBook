@@ -64,6 +64,7 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 				// Khởi tạo đối tượng saleOrderProducts
 				SaleorderProducts saleOrderProducts = new SaleorderProducts();
 				Optional<Product> product = productService.findById(cartItem.getProductId());
+
 				if(product.isPresent()) {
 					saleOrderProducts.setProduct(product.get());
 					saleOrderProducts.setQuantity(cartItem.getQuantity());
@@ -88,9 +89,7 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 			}
 
 			saleOrder.setTotalPrice(totalPrice);
-
 			saleOrder = save(userLogined, saleOrder);
-
 			response = new ResultUtil("success", "Đặt hàng thành công");
 
 				// Gửi email đơn hàng được sử dụng bất đồng bộ
@@ -108,7 +107,6 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 
 	@Transactional
 	public SaleOrder save(User userLogined, SaleOrder saleOrder) {
-
 		String userName = getUserName(userLogined);
 		if (saleOrder.getId() == null) {
 			super.save(saleOrder); // thêm mới

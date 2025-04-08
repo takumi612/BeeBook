@@ -61,10 +61,7 @@ public class BlogController extends BaseController {
 
 
     @RequestMapping(value = {"/admin/blog/addBlog"}, method = RequestMethod.POST)
-    public String addBlog(@ModelAttribute("BlogDto") BlogDto blogDto,
-                          @ModelAttribute("userLogined") User userLogined
-    ) throws Exception { // hứng file đẩy lên)
-
+    public String addBlog(@ModelAttribute("BlogDto") BlogDto blogDto) throws Exception {
         blogService.save(blogDto);
         return "redirect:/admin/blog";
     }

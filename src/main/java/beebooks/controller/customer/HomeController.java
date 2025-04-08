@@ -34,21 +34,12 @@ public class HomeController extends BaseController {
 	private final MailService mailService;
 
 
-	@RequestMapping(value = { "/", "/home" }, method = RequestMethod.GET)
+	@RequestMapping(value = { "/", "/home" }, method = {RequestMethod.GET,RequestMethod.POST})
 	public String home(final Model model,
 					   @ModelAttribute("searchModel")ProductSearch searchModel) throws IOException {
 
 		Page<ProductProjection> productList = productService.findAllToDto(searchModel.getPage());
 
-		model.addAttribute("productsPage", productList);
-		model.addAttribute("searchModel", searchModel);
-		return "customer/index";
-	}
-
-	@RequestMapping(value = { "/", "/home" }, method = RequestMethod.POST)
-	public String search(final Model model,
-					   @ModelAttribute("searchModel")ProductSearch searchModel) throws IOException {
-		Page<ProductProjection> productList = productService.findAllToDto(searchModel.getPage());
 		model.addAttribute("productsPage", productList);
 		model.addAttribute("searchModel", searchModel);
 		return "customer/index";

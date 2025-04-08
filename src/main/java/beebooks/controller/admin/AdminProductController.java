@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -87,7 +88,7 @@ public class AdminProductController extends BaseController {
                               RedirectAttributes redirectAttributes
                              ){
         try {
-            ResultUtil resultUtil = productService.addProduct(productDetailDto);
+            ResultUtil resultUtil = productService.saveProduct(productDetailDto);
 
             if(resultUtil.getResult().equalsIgnoreCase("errorMessage")){
                 productService.addProductFormAttributes(model);

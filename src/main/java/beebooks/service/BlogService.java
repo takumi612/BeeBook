@@ -4,7 +4,7 @@ import beebooks.dto.BlogDto;
 import beebooks.specifications.BLogSpecification;
 import beebooks.ultilities.searchUtil.BlogSearch;
 import beebooks.entities.Blog;
-import beebooks.entities.BlogImage;
+import beebooks.entities.Images;
 import beebooks.repository.BlogRepository;
 import beebooks.ultilities.ResultUtil;
 import com.github.slugify.Slugify;
@@ -28,8 +28,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class BlogService extends BaseService<Blog,Integer> {
-
-    private final BlogImageService blogImageService;
     private final ProductService productService;
     private final BlogRepository blogRepository;
     private final CategoriesBlogService categoriesBlogService;
@@ -40,9 +38,8 @@ public class BlogService extends BaseService<Blog,Integer> {
     @Value("${app.upload.default")
     private String defaultPath;
 
-    public BlogService(ProductService productService,BlogRepository blogRepository, BlogImageService blogImageService, CategoriesBlogService categoriesBlogService) {
+    public BlogService(ProductService productService,BlogRepository blogRepository, CategoriesBlogService categoriesBlogService) {
         super(blogRepository);
-        this.blogImageService = blogImageService;
         this.categoriesBlogService = categoriesBlogService;
         this.productService = productService;
         this.blogRepository = blogRepository;
@@ -65,8 +62,6 @@ public class BlogService extends BaseService<Blog,Integer> {
 
         Blog blog = transferDtoToBlog(blogDto);
         MultipartFile productAvatar = blogDto.getProductAvatar();
-        MultipartFile[] productPictures =blogDto.getProductPictures();
-
 
         // có đẩy avartar ??? => xóa avatar cũ đi và thêm avatar mới
         if (productAvatar != null && !productAvatar.isEmpty()) {
@@ -83,20 +78,20 @@ public class BlogService extends BaseService<Blog,Integer> {
                 blog.setAvatar(defaultPath);
             }
         }
-        // có đẩy pictures ???
-        if (productPictures != null && productPictures.length > 0) {
-            // Delete existing blog images
-            if (blogDto.getBlogImages() != null) {
-                for (BlogImage path : blogDto.getBlogImages()) {
-                    deleteFile(path.getPath());
-                    blogImageService.deleteByBlogId(blog.getId());
-                }
-            }
-            // Save new blog pictures
-            savePictures(blog, productPictures);
-        }else if(blogDto.getBlogImages()!=null && !blogDto.getBlogImages().isEmpty()){
-            blog.setBlogImages(blogDto.getBlogImages());
-        }
+//        // có đẩy pictures ???
+//        if (productPictures != null && productPictures.length > 0) {
+//            // Delete existing blog images
+//            if (blogDto.getImages() != null) {
+//                for (Images path : blogDto.getImages()) {
+//                    deleteFile(path.getPath());
+//                    blogImageService.deleteByBlogId(blog.getId());
+//                }
+//            }
+//            // Save new blog pictures
+//            savePictures(blog, productPictures);
+//        }else if(blogDto.getImages()!=null && !blogDto.getImages().isEmpty()){
+//            blog.setImages(blogDto.getImages());
+//        }
         blog.setSeo(new Slugify().slugify(blog.getTitle()));
         return super.save(blog);
     }
@@ -116,10 +111,10 @@ public class BlogService extends BaseService<Blog,Integer> {
                 .forEach(pic -> {
                     try{
                         String picturePath = productService.saveFile(pic, "pictures");
-                        BlogImage pi = new BlogImage();
+                        Images pi = new Images();
                         pi.setPath(picturePath);
                         pi.setTitle(pic.getOriginalFilename());
-                        blog.addBlogImage(pi);
+//                        blog.addBlogImage(pi);
                     }catch (IOException e){
                         log.error("Error saving productPicture");
                     }
@@ -144,6 +139,5 @@ public class BlogService extends BaseService<Blog,Integer> {
         blog.setCategoriesBlog(categoriesBlogService.findById(blogDto.getCategoryId()).orElse(null));
         return blog;
     }
-
 
 }

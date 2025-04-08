@@ -66,7 +66,7 @@
                     <div>
                         <button type="button"
                                 class="btn btn-flat btn-outline-secondary mb-3">
-                            <a href="${base }/admin/editCategoryBlog"> Thêm mới danh mục blog</a>
+                            <a href="${base }/admin/addCategoryBlog"> Thêm mới danh mục blog</a>
                         </button>
 
                     </div>

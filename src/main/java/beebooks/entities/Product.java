@@ -60,12 +60,11 @@ public class Product extends BaseEntity{
 	private Promotion promotion;
 
 	@OneToMany(mappedBy = "product",fetch = FetchType.LAZY)
-	private Set<ProductImage> productImage = new HashSet<>();
+	private Set<Images> images = new HashSet<>();
 
 
-	public void addProductImage(ProductImage _productImage) {
-		_productImage.setProduct(this);
-		productImage.add(_productImage);
+	public void addProductImage(Images productImages) {
+		images.add(productImages);
 	}
 
 	public  boolean isPromotionValid() {

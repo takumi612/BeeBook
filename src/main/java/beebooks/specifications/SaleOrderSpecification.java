@@ -70,15 +70,12 @@ public class SaleOrderSpecification {
             if (startDateTime == null && endDateTime == null) {
                 return criteriaBuilder.conjunction();
             }
-
             if (startDateTime != null && endDateTime == null) {
                 return criteriaBuilder.greaterThanOrEqualTo(root.get("createdDate"), startDateTime);
             }
-
             if (startDateTime == null) {
                 return criteriaBuilder.lessThanOrEqualTo(root.get("createdDate"), endDateTime);
             }
-
             return criteriaBuilder.between(root.get("createdDate"), startDateTime, endDateTime);
         };
     }
