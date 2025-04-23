@@ -28,7 +28,7 @@ import java.util.List;
 @Slf4j
 @Service
 public class BlogService extends BaseService<Blog,Integer> {
-    private final ProductService productService;
+    private final FileService fileService;
     private final BlogRepository blogRepository;
     private final CategoriesBlogService categoriesBlogService;
 
@@ -38,10 +38,10 @@ public class BlogService extends BaseService<Blog,Integer> {
     @Value("${app.upload.default")
     private String defaultPath;
 
-    public BlogService(ProductService productService,BlogRepository blogRepository, CategoriesBlogService categoriesBlogService) {
+    public BlogService(FileService fileService, BlogRepository blogRepository, CategoriesBlogService categoriesBlogService) {
         super(blogRepository);
         this.categoriesBlogService = categoriesBlogService;
-        this.productService = productService;
+        this.fileService = fileService;
         this.blogRepository = blogRepository;
     }
 
@@ -69,7 +69,7 @@ public class BlogService extends BaseService<Blog,Integer> {
                 deleteFile(blogDto.getAvatar());
             }
             // Save new avatar
-            String avatarPath = productService.saveFile(productAvatar, "avatar");
+            String avatarPath = fileService.saveFile(productAvatar, "avatar");
             blog.setAvatar(avatarPath);
         } else {
             if(blogDto.getAvatar()!=null && !blogDto.getAvatar().isEmpty()){
@@ -110,7 +110,7 @@ public class BlogService extends BaseService<Blog,Integer> {
                 .filter(pic -> pic != null && !pic.isEmpty())
                 .forEach(pic -> {
                     try{
-                        String picturePath = productService.saveFile(pic, "pictures");
+                        String picturePath = fileService.saveFile(pic, "pictures");
                         Images pi = new Images();
                         pi.setPath(picturePath);
                         pi.setTitle(pic.getOriginalFilename());

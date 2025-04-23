@@ -87,7 +87,7 @@ public class SaleOrderSpecification {
     public static Specification<SaleOrder> searchByStatus(String status) {
         return (root, query, criteriaBuilder) ->
         {
-                if(status == null){
+                if(status == null || status.isEmpty()){
                     return criteriaBuilder.conjunction();
                 }
                 PaymentStatus paymentStatus = PaymentStatus.valueOf(status);

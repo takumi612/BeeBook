@@ -109,7 +109,7 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 	public SaleOrder save(User userLogined, SaleOrder saleOrder) {
 		String userName = getUserName(userLogined);
 		if (saleOrder.getId() == null) {
-			super.save(saleOrder); // thêm mới
+			saleOrderRepository.save(saleOrder); // thêm mới
 			saleOrder.getSaleOrderProducts().
 					forEach(saleorderProductsService::save
 					);
@@ -117,7 +117,7 @@ public class SaleOrderService extends BaseService<SaleOrder,Integer> {
 		} else {
 			saleOrder.setUpdatedDate(LocalDateTime.now());
 			saleOrder.setUpdatedBy(userName);
-			return super.save(saleOrder); // cập nhật
+			return saleOrderRepository.save(saleOrder); // cập nhật
 		}
 	}
 

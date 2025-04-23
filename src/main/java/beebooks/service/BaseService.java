@@ -34,14 +34,6 @@ public abstract class BaseService<T extends BaseEntity, ID extends Serializable>
 		return repository.save(entity);
 	}
 
-	public List<T> saveAll(List<T> entities) {
-		return repository.saveAll(entities);
-	}
-
-	public void delete(T entity) {
-		repository.delete(entity);
-	}
-
 	public void deleteById(ID id) {
 		Optional<T> entityOptional = repository.findById(id);
 		entityOptional.ifPresent(entity -> {

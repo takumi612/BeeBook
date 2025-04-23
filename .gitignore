@@ -5,3 +5,4 @@
 application-*.yml
 !application-example.yml
 .src/main/resources/img/upload/product/avatar
+.target

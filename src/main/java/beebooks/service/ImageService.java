@@ -12,8 +12,4 @@ public class ImageService extends BaseService<Images,Integer> {
 		super(repository);
 		this.repository = repository;
 	}
-
-	public void deleteByPath(String path) {
-		repository.deleteProductImageByPath(path);
-	}
 }

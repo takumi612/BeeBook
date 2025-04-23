@@ -19,10 +19,6 @@ public class SaleOrderProductsService extends BaseService<SaleorderProducts,Inte
         this.repository = repository;
     }
 
-	public Page<SaleorderProducts> getByOrderId(OrderSearch searchModel) {
-		return repository.findBySaleOrderId(searchModel.getId(),searchModel.getPage());
-	}
-
 	public Page<SaleorderProducts> getByOrderCode(OrderSearch searchModel) {
 		return repository.findBySaleOrderCode(searchModel.getCode(),searchModel.getPage());
 	}
